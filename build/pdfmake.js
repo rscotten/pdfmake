@@ -66349,7 +66349,7 @@ function buildCanvas(data, options) {
 
   var matrix = generateFrame(data, options);
   var n = matrix.length;
-  var modSize = Math.floor(options.fit ? options.fit / n : 5);
+  var modSize = options.fit ? options.fit / n : 5;
   var size = n * modSize;
   canvas.push({
     type: 'rect',
