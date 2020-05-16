@@ -2,6 +2,7 @@ import TextDecorator from './TextDecorator';
 import TextInlines from './TextInlines';
 import { isNumber } from './helpers/variableType';
 
+// TODO: refactor lazy load init
 const getSvgToPDF = function () {
 	try {
 		// optional dependency to support svg nodes
@@ -168,7 +169,6 @@ class Renderer {
 				this.pdfDocument.ref({ Type: 'Action', S: 'GoTo', D: [inline.linkToPage, 0, 0] }).end();
 				this.pdfDocument.annotate(x + inline.x, y + shiftToBaseline, inline.width, inline.height, { Subtype: 'Link', Dest: [inline.linkToPage - 1, 'XYZ', null, null, null] });
 			}
-
 		}
 
 		textDecorator.drawDecorations(line, x, y);
@@ -268,6 +268,13 @@ class Renderer {
 		this.pdfDocument.image(image.image, image.x, image.y, { width: image._width, height: image._height });
 		if (image.link) {
 			this.pdfDocument.link(image.x, image.y, image._width, image._height, image.link);
+		}
+		if (image.linkToPage) {
+			this.pdfDocument.ref({ Type: 'Action', S: 'GoTo', D: [image.linkToPage, 0, 0] }).end();
+			this.pdfDocument.annotate(image.x, image.y, image._width, image._height, { Subtype: 'Link', Dest: [image.linkToPage - 1, 'XYZ', null, null, null] });
+		}
+		if (image.linkToDestination) {
+			this.pdfDocument.goTo(image.x, image.y, image._width, image._height, image.linkToDestination);
 		}
 	}
 
